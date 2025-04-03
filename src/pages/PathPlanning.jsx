@@ -9,7 +9,11 @@ const GRID_SIZE = 600;
 
 const PathPlanning = () => {
     const [isLoading, setIsLoading] = useState(false);
-    const { socket, isConnected, pathData } = useWebSocket();
+    const [maxIter, setMaxIter] = useState(100);
+    const [popSize, setPopSize] = useState(100);
+    const [numControlPoints, setNumControlPoints] = useState(2);
+    const { socket, isConnected, pathData, clearPathData, stopOptimization } =
+        useWebSocket();
     const {
         obstacles,
         selectedObstacle,
@@ -61,9 +65,9 @@ const PathPlanning = () => {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    maxIter: 100,
-                    popSize: 100,
-                    numControlPoints: 3,
+                    maxIter,
+                    popSize,
+                    numControlPoints,
                     resolution: 50,
                 }),
             });
@@ -77,6 +81,26 @@ const PathPlanning = () => {
         } finally {
             setIsLoading(false);
         }
+    };
+
+    // Comprehensive reset function that handles everything
+    const handleReset = async () => {
+        // Stop any running optimizations
+        await stopOptimization();
+
+        // Clear the path data
+        clearPathData();
+
+        // Reset start and end positions
+        resetPositions();
+
+        // Clear all obstacles
+        clearObstacles();
+
+        // Reset loading state
+        setIsLoading(false);
+
+        console.log("Complete reset performed");
     };
 
     return (
@@ -101,10 +125,10 @@ const PathPlanning = () => {
                                 Set End
                             </button>
                             <button
-                                onClick={resetPositions}
-                                className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+                                onClick={handleReset}
+                                className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
                             >
-                                Reset Positions
+                                Reset All
                             </button>
                             <button
                                 onClick={calculatePath}
@@ -121,6 +145,54 @@ const PathPlanning = () => {
                             >
                                 Clear Obstacles
                             </button>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-4 mb-6">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Max Iterations
+                            </label>
+                            <input
+                                type="number"
+                                min="100"
+                                max="5000"
+                                value={maxIter}
+                                onChange={(e) =>
+                                    setMaxIter(Number(e.target.value))
+                                }
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Population Size
+                            </label>
+                            <input
+                                type="number"
+                                min="10"
+                                max="500"
+                                value={popSize}
+                                onChange={(e) =>
+                                    setPopSize(Number(e.target.value))
+                                }
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Control Points
+                            </label>
+                            <input
+                                type="number"
+                                min="1"
+                                max="20"
+                                value={numControlPoints}
+                                onChange={(e) =>
+                                    setNumControlPoints(Number(e.target.value))
+                                }
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                            />
                         </div>
                     </div>
 

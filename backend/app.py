@@ -107,6 +107,9 @@ def run_pso_optimization(problem, pso_params):
                     }
                 })
                 
+          
+                socketio.sleep(0.01)
+                
                 logger.info(f"Iteration {data['it']}: Cost = {total_cost:.2f}, Length = {path_length:.2f}")
             except Exception as e:
                 logger.error(f'Error in PSO callback: {str(e)}')
@@ -137,6 +140,9 @@ def run_pso_optimization(problem, pso_params):
                     'collisions': int(bestsol['details'].get('collision_violation_count', 0))
                 }
             })
+            
+     
+            socketio.sleep(0.01)
         
         return bestsol
     except Exception as e:
@@ -184,6 +190,17 @@ def run_pso():
         return jsonify({'status': 'optimization_started'})
     except Exception as e:
         logger.error(f'Error starting PSO: {str(e)}')
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
+@app.route('/api/stop-optimization', methods=['POST'])
+def stop_optimization():
+    try:
+        global current_optimization
+        logger.info("Request to stop current optimization received")
+        stop_current_optimization()
+        return jsonify({'status': 'success', 'message': 'Optimization stopped'})
+    except Exception as e:
+        logger.error(f'Error stopping optimization: {str(e)}')
         return jsonify({'status': 'error', 'message': str(e)}), 500
 
 if __name__ == '__main__':

@@ -1,7 +1,7 @@
 import numpy as np
 from copy import deepcopy
+import time
 
-# Particle Swarm Optimization
 def PSO(problem, **kwargs):
 
     max_iter = kwargs.get('max_iter', 100)
@@ -13,7 +13,7 @@ def PSO(problem, **kwargs):
     callback = kwargs.get('callback', None)
     resetting = kwargs.get('resetting', None)
     
-    # Empty Particle Template
+
     empty_particle = {
         'position': None,
         'velocity': None,
@@ -26,20 +26,20 @@ def PSO(problem, **kwargs):
         },
     }
 
-    # Extract Problem Info
+
     cost_function = problem['cost_function']
     var_min = problem['var_min']
     var_max = problem['var_max']
     num_var = problem['num_var']
     
-    # Initialize Global Best
+    
     gbest = {
         'position': None,
         'cost': np.inf,
         'details': None,
     }
 
-    # Create Initial Population
+  
     pop = []
     for i in range(0, pop_size):
         pop.append(deepcopy(empty_particle))
@@ -52,8 +52,8 @@ def PSO(problem, **kwargs):
         
         if pop[i]['best']['cost'] < gbest['cost']:
             gbest = deepcopy(pop[i]['best'])
-        
-    # PSO Loop
+
+
     for it in range(0, max_iter):
         do_resetting = resetting and ((it + 1) % resetting == 0)
         if do_resetting:
@@ -92,5 +92,8 @@ def PSO(problem, **kwargs):
                 'gbest': gbest,
                 'pop': pop,
             })
+            
+            
+            time.sleep(0.05)
 
     return gbest, pop

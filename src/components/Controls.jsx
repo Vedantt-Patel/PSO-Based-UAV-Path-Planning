@@ -19,6 +19,26 @@ const Controls = ({
         <div className="w-64">
             <div className="bg-gray-50 p-4 rounded border border-gray-200">
                 <h2 className="text-lg font-semibold mb-4">Controls</h2>
+
+                {/* Real-time Path Update Indicator */}
+                {pathData && pathData.path && pathData.path.length > 0 && (
+                    <div className="mb-4 bg-blue-50 p-3 rounded border border-blue-200">
+                        <h3 className="text-sm font-medium text-blue-700 mb-2">
+                            Real-time Updates
+                        </h3>
+                        <div className="space-y-2">
+                            <div className="flex justify-between text-sm">
+                                <span className="text-blue-600">
+                                    Current Iteration:
+                                </span>
+                                <span className="font-medium">
+                                    {pathData.iteration}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
                 <div className="space-y-4">
                     {/* Obstacle Management Section */}
                     <div>
@@ -87,7 +107,7 @@ const Controls = ({
                     </div>
 
                     {/* Path Information Section */}
-                    {isLoading && pathData.path && pathData.path.length > 0 && (
+                    {pathData && pathData.path && pathData.path.length > 0 && (
                         <div className="mt-4 bg-white p-3 rounded border border-gray-200">
                             <h3 className="text-sm font-medium text-gray-700 mb-2">
                                 Path Information
